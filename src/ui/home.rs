@@ -12,11 +12,21 @@ use crate::core::session::{SessionPane, SessionTab};
 use crate::ui::app::OsirisApp;
 use crate::ui::i18n::{L10nKey, t, t_fmt, t_plural};
 
+/// The wordmark on the empty window — the closest thing this app has to a boot
+/// rite, so it carries the full name rather than an abbreviation.
+///
+/// Drawn from half-block glyphs (U+2580/2584/2588) at two pixel rows per text
+/// row, not from a font: the mark has to hold its shape at any UI scale, and
+/// Hack ships these three code points. The blinking cursor in `render_home` is
+/// appended after the last row, so that row ends flush with no trailing space.
+///
+/// Every row is the same width (37). `logo_rows_never_exceed_the_first_row_width`
+/// guards that — a short row would slide the cursor left twice a second.
 const LOGO: [&str; 4] = [
-    " ▄▄▄ ▄▄▄ ▄  ▄ ▄▄▄▄",
-    "  █   █  █  █    █",
-    "  █   █  ▀▄▄█   █",
-    "  ▀▄  ▀▄ ▄▄▄▀  █  ",
+    "█▀█ █▀▀ ▀█▀ █▀█ ▀█▀ █▀▀   █▀▀ █ █ █▀▀",
+    "█ █ █▄▄  █  █▄█  █  █▄▄   █▄▄  █  █▄▄",
+    "█ █   █  █  █ █  █    █   █    █  █  ",
+    "█▄█ ▀▀▀ ▄█▄ █ █ ▄█▄ ▀▀▀ ▄ █▄▄ █ █ █▄▄",
 ];
 
 const LOGO_PX: f32 = 20.0;
