@@ -1,0 +1,12 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- OSIRIS.EXE mark, small-size cut (≤48px: taskbar, Explorer, tray-adjacent).
+       Same grammar as app-icon.svg with the detail that cannot survive
+       downsampling removed: no scanlines, no archive lines, one block cursor
+       and one hard contact edge. Kept as its own file rather than generated,
+       so the small icon is art-directed instead of averaged. -->
+  <rect x="4" y="4" width="120" height="120" rx="24" fill="#010103"/>
+  <rect x="26" y="28" width="30" height="52" fill="#00FF46"/>
+  <rect x="66" y="28" width="36" height="10" fill="#D8D2C4" opacity="0.30"/>
+  <rect x="26" y="94" width="60" height="12" fill="#00FF46"/>
+  <rect x="86" y="94" width="16" height="12" fill="#FF3A1A"/>
+</svg>

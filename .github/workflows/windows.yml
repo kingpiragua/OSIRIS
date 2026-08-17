@@ -1,0 +1,74 @@
+name: Windows build
+
+# The short road to an osiris.exe you can run.
+#
+# release.yml only fires on a `v*` tag and nightly.yml only on a schedule, so
+# neither answers "I pushed something, give me the binary." This does: every
+# push to main (and any manual dispatch) produces the same two Windows
+# artifacts the release job would — the portable zip and the Inno installer —
+# and attaches them to the run. No tag, no release, nothing published.
+#
+# It reuses `.github/scripts/bundle-windows.ps1` rather than repeating the
+# staging rules, so the layout stays a single source of truth: osiris.exe (the
+# GUI), oexe.exe (the CLI), osiris-updater.exe, completions\, the bundled
+# ConPTY pair, and the markers the in-app updater reads.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+  workflow_dispatch:
+
+concurrency:
+  group: windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout osiris
+        uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - uses: Swatinem/rust-cache@v2
+
+      # `--locked` for the same reason the release job uses it: build the
+      # dependency set the commit recorded, not whatever cargo re-resolves.
+      - name: Build osiris.exe, oexe.exe and the updater
+        shell: bash
+        run: |
+          cargo build --release --locked --target x86_64-pc-windows-msvc
+          cargo build --release --locked --features updater \
+            --bin osiris-updater --target x86_64-pc-windows-msvc
+
+      # Not fetched from a release: this workflow publishes nothing, so a WSL
+      # connect from one of these builds falls back to its normal message
+      # naming the directories it searched. bundle-windows.ps1 warns and
+      # continues when the directory is absent.
+      - name: Package installer + portable zip
+        shell: pwsh
+        run: '& ./.github/scripts/bundle-windows.ps1 "x86_64-pc-windows-msvc" "x86_64"'
+
+      - name: Verify the package layout
+        shell: pwsh
+        run: '& ./.github/scripts/verify-windows-package.ps1 "x86_64"'
+
+      - name: Upload osiris.exe artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: osiris-windows-x86_64
+          path: |
+            dist/*.zip
+            dist/*-setup.exe
+          if-no-files-found: error

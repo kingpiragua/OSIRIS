@@ -1,0 +1,38 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- OSIRIS.EXE app mark — canon-lock v4.1.
+       A recovered CRT screen: duat black (#010103) under phosphor scanlines,
+       with the block cursor and a single crimson edge where the Network meets
+       the Signal. The poles NEVER blend: they touch at one hard contact edge
+       and nowhere else. No green/red gradient, no #7dffb0, no soft glow.
+       Tile inset + radius follow the macOS Big Sur icon grid (824pt @1024);
+       everything inside the tile is hard-edged, as the world is. -->
+  <defs>
+    <clipPath id="tile">
+      <rect x="100" y="100" width="824" height="824" rx="185"/>
+    </clipPath>
+    <!-- Scanlines: one 9px phosphor line every 32px. Punctuation, not
+         wallpaper — they sit at 0.09 and never animate. -->
+    <pattern id="scan" width="32" height="32" patternUnits="userSpaceOnUse">
+      <rect width="32" height="9" fill="#00FF46" opacity="0.09"/>
+    </pattern>
+  </defs>
+
+  <g clip-path="url(#tile)">
+    <rect x="100" y="100" width="824" height="824" fill="#010103"/>
+    <rect x="100" y="100" width="824" height="824" fill="url(#scan)"/>
+
+    <!-- Two archive lines above the prompt: bone, dim, unreadable on purpose. -->
+    <rect x="236" y="330" width="392" height="26" fill="#D8D2C4" opacity="0.34"/>
+    <rect x="236" y="404" width="268" height="26" fill="#D8D2C4" opacity="0.20"/>
+
+    <!-- The prompt: phosphor rule, then the block cursor. -->
+    <rect x="236" y="508" width="96" height="26" fill="#00FF46"/>
+    <rect x="380" y="470" width="132" height="180" fill="#00FF46"/>
+
+    <!-- MEMORY INTEGRITY 63% — the Horus fractions sum to 63/64. The bar runs
+         phosphor to 63% of its width and stops dead against crimson. That
+         boundary is the only place the two poles touch. -->
+    <rect x="236" y="716" width="349" height="34" fill="#00FF46"/>
+    <rect x="585" y="716" width="203" height="34" fill="#FF3A1A"/>
+  </g>
+</svg>
