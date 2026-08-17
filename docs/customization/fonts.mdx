@@ -8,18 +8,23 @@ description: "The bundled default, fallback chains, ligatures, and why CJK needs
 
 | Setting | Default | |
 |---|---|---|
-| **Font family** | Hack | Picked from fonts installed on your system |
+| **Font family** | Geist Mono | Or anything installed on your system |
 | **Font size** | 15 px | The terminal grid |
 | **Interface font size** | 16 px | Everything outside the grid (12–24) |
 | **Line height** | 1.4 | A multiple of the font size |
 | **Bold font** / **Italic font** | — | Distinct faces, when you want them |
 | **Font ligatures** | off | Contextual alternates stay off unless you ask |
 
-## Hack is bundled
+## Two faces ship inside the binary
 
-The default font ships inside the binary. It renders identically on every
-machine without relying on a system install, so a fresh laptop looks like the
-one you set up last year.
+**Geist Mono** is the default — the terminal voice OSIRIS.EXE is written in,
+under the SIL Open Font License. **Hack** stays embedded behind it as the
+fallback anchor, so a config that names Hack keeps working and the chain always
+ends on a face that cannot be missing.
+
+Neither depends on a system install: a fresh machine renders exactly like the
+one you set up last year, and both carry the block glyphs the home wordmark and
+the block cursor are drawn from.
 
 ## Fallbacks
 

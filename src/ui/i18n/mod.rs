@@ -902,6 +902,9 @@ l10n_keys! {
     HomeTimeMonthsAgo,
     HomeTimeOverYearAgo,
     HomeReopenNamed,
+    HomeIntegrity,
+    HomeIntegrityDetail,
+    HomeIntegrityCeiling,
     AppMenuAbout,
     AppMenuCheckForUpdates,
     AppMenuSettings,
@@ -1492,6 +1495,14 @@ mod tests {
             L10nKey::SftpContextChmod,
             // Every locale spells this button the same way.
             L10nKey::Ok,
+            // The shared error voice. Both terminals in this world answer an
+            // unknown command the same way, in the same words, whatever locale
+            // the interface is set to.
+            L10nKey::NoMatchingCommands,
+            // A machine readout, not prose: the archive prints this line the
+            // same way on every locale, the way a protocol name is spelled the
+            // same everywhere. Only the sentence under it is translated.
+            L10nKey::HomeIntegrity,
             // Pure templates: every word in them is a placeholder.
             L10nKey::AppCmdSshProfileTitle,
             L10nKey::HostOpsError,

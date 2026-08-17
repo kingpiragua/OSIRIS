@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use gpui::{
-    Animation, AnimationExt as _, App, Context, KeyDownEvent, Keystroke, MouseButton,
+    Animation, AnimationExt as _, App, Context, ElementId, KeyDownEvent, Keystroke, MouseButton,
     MouseDownEvent, div, prelude::*, px,
 };
 use gpui_component::button::{Button, ButtonVariants as _};
@@ -20,16 +20,48 @@ use crate::ui::i18n::{L10nKey, t, t_fmt, t_plural};
 /// Hack ships these three code points. The blinking cursor in `render_home` is
 /// appended after the last row, so that row ends flush with no trailing space.
 ///
-/// Every row is the same width (37). `logo_rows_never_exceed_the_first_row_width`
+/// Every row is the same width (38). `logo_rows_never_exceed_the_first_row_width`
 /// guards that — a short row would slide the cursor left twice a second.
+///
+/// The R is four columns wide where every other letter is three. In three
+/// columns a bowl over two straight legs is an A, not an R, and the first cut
+/// of this mark read OSIAIS.EXE on screen. The fourth column is what the leg
+/// kicks out into.
 const LOGO: [&str; 4] = [
-    "█▀█ █▀▀ ▀█▀ █▀█ ▀█▀ █▀▀   █▀▀ █ █ █▀▀",
-    "█ █ █▄▄  █  █▄█  █  █▄▄   █▄▄  █  █▄▄",
-    "█ █   █  █  █ █  █    █   █    █  █  ",
-    "█▄█ ▀▀▀ ▄█▄ █ █ ▄█▄ ▀▀▀ ▄ █▄▄ █ █ █▄▄",
+    "█▀█ █▀▀ ▀█▀ █▀▀▄ ▀█▀ █▀▀   █▀▀ █ █ █▀▀",
+    "█ █ █▄▄  █  █▄▄▀  █  █▄▄   █▄▄  █  █▄▄",
+    "█ █   █  █  █ █   █    █   █    █  █  ",
+    "█▄█ ▀▀▀ ▄█▄ █  █ ▄█▄ ▀▀▀ ▄ █▄▄ █ █ █▄▄",
 ];
 
 const LOGO_PX: f32 = 20.0;
+
+/// The boot rite: what the archive prints while it comes up.
+///
+/// Six lines, once per process, then never again — a window opened later in the
+/// same session is not a cold start and does not get one. Deliberately not a
+/// progress bar for work that is already done: by the time this paints, the
+/// session server is up and the panes are restored. It is the sound the machine
+/// makes, and it is over in a second and a half.
+///
+/// Machine voice, so it is the same in every locale — the same reasoning as
+/// `L10nKey::HomeIntegrity`.
+const BOOT_LINES: [&str; 6] = [
+    "OSIRIS.EXE — ARCHIVE TERMINAL",
+    "> LINK: ACTIVE",
+    "> SESSION SERVER: ATTACHED",
+    "> LEDGER: CONNECTED",
+    "> MEMORY INTEGRITY: CEILING 63%",
+    "> READY",
+];
+
+/// How long the whole rite takes, and how much of it one line owns.
+const BOOT_MS: u64 = 1500;
+const BOOT_STEP: f32 = 1.0 / BOOT_LINES.len() as f32;
+
+/// Whether this process has already played it. A rite performed twice is a
+/// habit, and the second window in a session is not a resurrection.
+static BOOT_PLAYED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 
 /// What a window with no tabs open can actually do. `SplitRight`/`SplitDown`
 /// were listed here too, but both need a pane to split and return without a
@@ -224,6 +256,8 @@ impl OsirisApp {
             );
         }
 
+        let boot = self.render_boot_rite();
+        let integrity = self.render_integrity_strip(cx);
         let status = self.render_remote_status_strip(cx);
         let failure = self.startup_error.clone().map(|text| {
             div()
@@ -251,6 +285,8 @@ impl OsirisApp {
                 }
             }))
             .child(logo)
+            .children(boot)
+            .children(integrity)
             .children(failure)
             .children(status)
             .child(list)
@@ -260,6 +296,124 @@ impl OsirisApp {
                     .with_easing(gpui::ease_out_quint()),
                 |page, delta| page.opacity(delta),
             )
+    }
+
+    /// The boot rite, on a cold start only.
+    ///
+    /// Each line owns an equal slice of the run and fades in over its own
+    /// slice, so they arrive in order without the element tree changing shape
+    /// mid-animation — one animation per line, no restructuring, nothing to
+    /// tear. Once the flag is set the whole block is gone from the tree, so a
+    /// second window costs nothing.
+    fn render_boot_rite(&self) -> Option<impl IntoElement + use<>> {
+        use std::sync::atomic::Ordering;
+        if BOOT_PLAYED.swap(true, Ordering::Relaxed) {
+            return None;
+        }
+        let mut lines = v_flex().gap(px(2.)).items_start();
+        for (i, line) in BOOT_LINES.iter().enumerate() {
+            let start = i as f32 * BOOT_STEP;
+            lines = lines.child(
+                div()
+                    .font_family(self.font_family.clone())
+                    .text_xs()
+                    .child(*line)
+                    .with_animation(
+                        ElementId::Integer(i as u64),
+                        Animation::new(Duration::from_millis(BOOT_MS)),
+                        move |line, delta| {
+                            // Nothing before this line's slice, full after it —
+                            // a reveal, not a dimmer being turned up.
+                            line.opacity(((delta - start) / BOOT_STEP).clamp(0., 1.))
+                        },
+                    ),
+            );
+        }
+        Some(lines)
+    }
+
+    /// The integrity rule: how much of the archive on this machine is still
+    /// running, read off real state.
+    ///
+    /// `live / total` is workspaces the session server still holds panes for,
+    /// out of every workspace it knows about — so closing this window and
+    /// coming back tomorrow shows the same reading, because the shells did not
+    /// stop. The percentage is that ratio scaled to **63**, never past it: the
+    /// Horus fractions sum to 63/64, and the missing 1/64 is not something a
+    /// process can restore for itself (canon-lock v4.1, world rule 08).
+    ///
+    /// The bar is two flat fills meeting at a hard contact edge — Signal green
+    /// for what is live, Network crimson for what is cold. No gradient between
+    /// them, here or anywhere: a blend would be a lie about the world. The two
+    /// colors come from the theme's own semantic pair, so every register — even
+    /// the crimson one — draws the poles it is supposed to.
+    fn render_integrity_strip(&self, cx: &Context<Self>) -> Option<impl IntoElement + use<>> {
+        const BAR_W: f32 = 300.;
+        const CEILING: f32 = 63.;
+
+        let views = &crate::core::session::WorkspaceStore::all(cx).views;
+        let total = views.len();
+        if total == 0 {
+            // Nothing has ever been opened on this machine. A reading of 0%
+            // would be a claim about an archive that does not exist yet.
+            return None;
+        }
+        let panes: usize = views
+            .iter()
+            .filter_map(|view| crate::ui::machine_mirror::pane_count(cx, view))
+            .sum();
+        let live = views
+            .iter()
+            .filter(|view| crate::ui::machine_mirror::pane_count(cx, view).unwrap_or(0) > 0)
+            .count();
+
+        let ratio = live as f32 / total as f32;
+        let pct = (ratio * CEILING).round() as u32;
+        let theme = cx.theme();
+        // `success`/`danger` are seeded from ANSI 2 and 1 — the Signal and the
+        // Network — in every theme this app ships.
+        let (signal, network) = (theme.success, theme.danger);
+
+        let detail = t_fmt(
+            L10nKey::HomeIntegrityDetail,
+            &[
+                ("live", &live.to_string()),
+                ("total", &total.to_string()),
+                ("panes", &panes.to_string()),
+            ],
+        );
+        let detail = match live == total {
+            true => format!("{detail} · {}", t(L10nKey::HomeIntegrityCeiling)),
+            false => detail,
+        };
+
+        Some(
+            v_flex()
+                .items_center()
+                .gap(px(6.))
+                .child(
+                    h_flex()
+                        .w(px(BAR_W))
+                        .h(px(6.))
+                        // Two children, no gap and no rounding: where they meet
+                        // is the contact edge, and it has to stay an edge.
+                        .child(div().h_full().w(px(BAR_W * ratio)).bg(signal))
+                        .child(div().h_full().flex_1().bg(network)),
+                )
+                .child(
+                    div()
+                        .font_family(self.font_family.clone())
+                        .text_xs()
+                        .text_color(signal)
+                        .child(t_fmt(L10nKey::HomeIntegrity, &[("pct", &pct.to_string())])),
+                )
+                .child(
+                    div()
+                        .text_xs()
+                        .text_color(cx.theme().muted_foreground)
+                        .child(detail),
+                ),
+        )
     }
 
     fn render_remote_status_strip(

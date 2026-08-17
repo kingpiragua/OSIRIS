@@ -752,15 +752,15 @@ mod unix_tests {
     }
 
     #[test]
-    fn an_unrelated_binary_named_osiris_is_left_alone() {
+    fn an_unrelated_binary_named_oexe_is_left_alone() {
         let dir = tmpdir("occupied");
-        let bin = tmpdir("occupied-src").join("osiris");
+        let bin = tmpdir("occupied-src").join("oexe");
         touch(&bin);
         // Someone's own build, installed by hand.
-        touch(&dir.join("osiris"));
+        touch(&dir.join("oexe"));
 
         match place(&dir, &bin, Mode::Symlink).unwrap() {
-            Placement::Occupied(p) => assert_eq!(p, dir.join("osiris")),
+            Placement::Occupied(p) => assert_eq!(p, dir.join("oexe")),
             Placement::Already(_) => panic!("claimed someone else's binary as ours"),
             Placement::Wrote(_) => panic!("clobbered a real binary"),
         }
@@ -769,8 +769,8 @@ mod unix_tests {
     #[test]
     fn our_own_link_is_recognised_and_then_repointed_on_upgrade() {
         let dir = tmpdir("relink");
-        let v1 = tmpdir("relink-v1").join("osiris");
-        let v2 = tmpdir("relink-v2").join("osiris");
+        let v1 = tmpdir("relink-v1").join("oexe");
+        let v2 = tmpdir("relink-v2").join("oexe");
         touch(&v1);
         touch(&v2);
 
@@ -783,17 +783,17 @@ mod unix_tests {
         ));
         // Upgraded install: the link follows it rather than reporting a clash.
         assert!(matches!(place(&dir, &v2, m).unwrap(), Placement::Wrote(_)));
-        assert_eq!(std::fs::read_link(dir.join("osiris")).unwrap(), v2);
+        assert_eq!(std::fs::read_link(dir.join("oexe")).unwrap(), v2);
     }
 
     #[test]
     fn a_link_aimed_somewhere_deliberate_is_not_hijacked() {
         let dir = tmpdir("deliberate");
-        let bin = tmpdir("deliberate-src").join("osiris");
+        let bin = tmpdir("deliberate-src").join("oexe");
         touch(&bin);
         let elsewhere = tmpdir("deliberate-other").join("my-terminal");
         touch(&elsewhere);
-        std::os::unix::fs::symlink(&elsewhere, dir.join("osiris")).unwrap();
+        std::os::unix::fs::symlink(&elsewhere, dir.join("oexe")).unwrap();
 
         assert!(matches!(
             place(&dir, &bin, Mode::Symlink).unwrap(),
@@ -804,8 +804,8 @@ mod unix_tests {
     #[test]
     fn a_copy_we_made_stays_ours_after_the_user_moves_off_the_appimage() {
         let dir = tmpdir("appimage-migrate");
-        let v1 = tmpdir("appimage-mount-1").join("osiris");
-        let v2 = tmpdir("appimage-mount-2").join("osiris");
+        let v1 = tmpdir("appimage-mount-1").join("oexe");
+        let v2 = tmpdir("appimage-mount-2").join("oexe");
         touch(&v1);
         std::fs::write(&v2, b"#!/bin/sh\n# a later build\n").unwrap();
 
@@ -815,7 +815,7 @@ mod unix_tests {
             place(&dir, &v1, Mode::Copy).unwrap(),
             Placement::Wrote(_)
         ));
-        assert!(!dir.join("osiris").is_symlink(), "should be a real copy");
+        assert!(!dir.join("oexe").is_symlink(), "should be a real copy");
         assert!(copy_marker(&dir).is_file(), "the copy went unclaimed");
 
         // Same AppImage again: the sizes match, so there is nothing to do.
@@ -835,7 +835,7 @@ mod unix_tests {
             place(&dir, &v2, Mode::Symlink).unwrap(),
             Placement::Wrote(_)
         ));
-        assert_eq!(std::fs::read_link(dir.join("osiris")).unwrap(), v2);
+        assert_eq!(std::fs::read_link(dir.join("oexe")).unwrap(), v2);
         assert!(
             !copy_marker(&dir).exists(),
             "a symlink must not keep the copy's marker"
@@ -846,9 +846,9 @@ mod unix_tests {
     fn an_occupied_directory_does_not_end_the_search() {
         let taken = tmpdir("scan-taken");
         let free = tmpdir("scan-free");
-        let bin = tmpdir("scan-src").join("osiris");
+        let bin = tmpdir("scan-src").join("oexe");
         touch(&bin);
-        touch(&taken.join("osiris"));
+        touch(&taken.join("oexe"));
 
         // Stand in for the candidate loop: the first directory is somebody
         // else's, and the second one must still get the link.
@@ -859,30 +859,30 @@ mod unix_tests {
                 break;
             }
         }
-        assert_eq!(wrote, Some(free.join("osiris")));
+        assert_eq!(wrote, Some(free.join("oexe")));
     }
 
     #[test]
     fn the_shadow_check_names_whoever_wins_the_lookup() {
         let early = tmpdir("shadow-early");
         let ours = tmpdir("shadow-ours");
-        touch(&early.join("osiris"));
-        touch(&ours.join("osiris"));
+        touch(&early.join("oexe"));
+        touch(&ours.join("oexe"));
 
         let path = vec![early.clone(), ours.clone()];
-        assert_eq!(first_cli_on(&path), Some(early.join("osiris")));
+        assert_eq!(first_cli_on(&path), Some(early.join("oexe")));
         // Our own directory first: no shadow.
         assert_eq!(
             first_cli_on(&[ours.clone(), early.clone()]),
-            Some(ours.join("osiris"))
+            Some(ours.join("oexe"))
         );
 
         // A dangling link is not something that wins a lookup.
         let dangling = tmpdir("shadow-dangling");
-        std::os::unix::fs::symlink(dangling.join("gone"), dangling.join("osiris")).unwrap();
+        std::os::unix::fs::symlink(dangling.join("gone"), dangling.join("oexe")).unwrap();
         assert_eq!(
             first_cli_on(&[dangling, ours.clone()]),
-            Some(ours.join("osiris"))
+            Some(ours.join("oexe"))
         );
     }
 }

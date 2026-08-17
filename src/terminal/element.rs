@@ -1687,6 +1687,11 @@ impl Element for TerminalElement {
         // would leave stacked decorations with a seam against the segments
         // below them.
         let dim = self.view.read(cx).dim.clamp(0., 1.);
+        // `try_global` rather than `global`: the view tests paint without an
+        // installed config, and a missing one means "no scanlines", not a panic.
+        let scanlines = cx
+            .try_global::<Config>()
+            .is_some_and(|cfg| cfg.crt_scanlines);
         let (colors, dim, under) = if dim < 1. {
             let under = dim_under(cx);
             (colors.dimmed(dim, under), dim, under)
@@ -1900,6 +1905,35 @@ impl Element for TerminalElement {
                 let mut c = colors.default_fg;
                 c.a = 0.12;
                 window.paint_quad(fill(bounds, c));
+            }
+
+            // The CRT the archive is remembered on, off unless asked for.
+            //
+            // Painted last so it lies over glyphs, selection and images alike —
+            // a scanline that stopped at the text would read as a bug rather
+            // than as a surface. One line every three device pixels at 4% of
+            // the foreground: enough to see the screen you are looking through,
+            // not enough to cost the text a contrast floor. It never animates
+            // (glitch is punctuation, not wallpaper) and it never blends the
+            // poles — the ink is the theme's own foreground, not a hue of its
+            // own.
+            if scanlines {
+                let mut ink = colors.default_fg;
+                ink.a = 0.04;
+                let pitch = (3.0 / scale).max(1.0);
+                let thickness = px(1.0 / scale);
+                let mut y = bounds.origin.y;
+                let end = bounds.origin.y + bounds.size.height;
+                while y < end {
+                    window.paint_quad(fill(
+                        Bounds {
+                            origin: point(bounds.origin.x, y),
+                            size: size(bounds.size.width, thickness),
+                        },
+                        ink,
+                    ));
+                    y += px(pitch);
+                }
             }
         });
 

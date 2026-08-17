@@ -142,6 +142,14 @@ pub struct Config {
     pub window_backdrop: WindowBackdrop,
     #[serde(default = "default_true")]
     pub dim_inactive_panes: bool,
+    /// Phosphor scanlines over the grid — the CRT the archive is remembered on.
+    ///
+    /// Off by default and deliberately faint when on: legibility of the text
+    /// under it outranks the atmosphere over it, and a permanent effect is
+    /// wallpaper rather than punctuation. One horizontal line every three
+    /// device pixels at 4% of the foreground, painted last, over everything.
+    #[serde(default)]
+    pub crt_scanlines: bool,
     pub keybindings: HashMap<String, String>,
     #[serde(default = "default_preset")]
     pub keybinding_preset: String,
@@ -522,7 +530,10 @@ pub fn platform_last_resort_fallbacks() -> &'static [&'static str] {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            font_family: "Hack".to_string(),
+            // Geist Mono is the terminal voice; it ships inside the binary
+            // (see `register_bundled_fonts`), so this default resolves on a
+            // machine with nothing installed.
+            font_family: "Geist Mono".to_string(),
             font_fallbacks: default_font_fallbacks(),
             font_family_bold: None,
             font_family_italic: None,
@@ -544,6 +555,7 @@ impl Default for Config {
             window_blur: None,
             window_backdrop: WindowBackdrop::default(),
             dim_inactive_panes: true,
+            crt_scanlines: false,
             keybindings: HashMap::new(),
             keybinding_preset: default_preset(),
             prefix: default_prefix(),
@@ -1739,7 +1751,7 @@ mod tests {
         let cfg: Config = serde_json::from_str(r#"{"font_size": 20.0}"#).unwrap();
         assert_eq!(cfg.font_size, 20.0);
         assert_eq!(cfg.line_height, 1.4);
-        assert_eq!(cfg.font_family, "Hack");
+        assert_eq!(cfg.font_family, "Geist Mono");
         assert_eq!(cfg.theme_preset, "osiris");
         assert!(cfg.keybindings.is_empty());
     }

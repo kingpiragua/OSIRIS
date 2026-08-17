@@ -13,16 +13,33 @@ use crate::ui::assets::Assets;
 use crate::ui::keymap;
 use gpui::*;
 
+/// Both bundled faces, embedded in the binary so a fresh machine renders
+/// correctly before anything is installed.
+///
+/// Geist Mono is the default and the terminal voice this project is written in
+/// (SIL Open Font License — `assets/fonts/geist-mono/LICENSE.txt`); Hack stays
+/// registered behind it as the fallback anchor `terminal::view::fallback_chain`
+/// pins, so a config naming Hack keeps working and neither face can be missing
+/// at runtime. Both carry U+2580/2584/2588, which the home wordmark and the
+/// block cursor are drawn from.
 fn register_bundled_fonts(cx: &mut App) {
     use std::borrow::Cow;
     let fonts = vec![
+        Cow::Borrowed(
+            include_bytes!("../assets/fonts/geist-mono/GeistMono-Regular.ttf").as_slice(),
+        ),
+        Cow::Borrowed(include_bytes!("../assets/fonts/geist-mono/GeistMono-Bold.ttf").as_slice()),
+        Cow::Borrowed(include_bytes!("../assets/fonts/geist-mono/GeistMono-Italic.ttf").as_slice()),
+        Cow::Borrowed(
+            include_bytes!("../assets/fonts/geist-mono/GeistMono-BoldItalic.ttf").as_slice(),
+        ),
         Cow::Borrowed(include_bytes!("../assets/fonts/hack/Hack-Regular.ttf").as_slice()),
         Cow::Borrowed(include_bytes!("../assets/fonts/hack/Hack-Bold.ttf").as_slice()),
         Cow::Borrowed(include_bytes!("../assets/fonts/hack/Hack-Italic.ttf").as_slice()),
         Cow::Borrowed(include_bytes!("../assets/fonts/hack/Hack-BoldItalic.ttf").as_slice()),
     ];
     if let Err(e) = cx.text_system().add_fonts(fonts) {
-        log::warn!("failed to register bundled Hack fonts: {e}");
+        log::warn!("failed to register the bundled fonts: {e}");
     }
 }
 

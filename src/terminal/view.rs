@@ -943,6 +943,11 @@ fn fallback_chain(family: &str, configured: &[String]) -> Vec<String> {
     for name in crate::core::config::platform_last_resort_fallbacks() {
         pin(name);
     }
+    // The two bundled faces, last and always: whatever the user names, the
+    // chain ends on something that is compiled into this binary rather than on
+    // something the machine might not have. Geist Mono first because it is the
+    // default face; Hack stays the final anchor it has always been.
+    pin("Geist Mono");
     pin("Hack");
     chain
 }

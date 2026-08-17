@@ -30,7 +30,7 @@ failing the file.
 
 | Key | Type | Default | |
 |---|---|---|---|
-| `font_family` | string | `"Hack"` | Primary face. Hack is bundled. |
+| `font_family` | string | `"Geist Mono"` | Primary face. Geist Mono and Hack are both bundled. |
 | `font_fallbacks` | string[] | platform list | Ordered fallbacks. Stock platform faces are appended to whatever you write. |
 | `font_family_bold` | string | — | A distinct bold face. |
 | `font_family_italic` | string | — | A distinct italic face. |
@@ -45,15 +45,16 @@ failing the file.
 
 | Key | Type | Default | |
 |---|---|---|---|
-| `theme_preset` | string | `"light"` | Active theme id. |
+| `theme_preset` | string | `"osiris"` | Active theme id — `osiris`, `eye_of_horus`, `signal_bleed`, `pale_horse`, `flyerhead`, or any of the nine upstream ids. |
 | `theme_follow_system` | bool | `false` | Follow the OS appearance. |
-| `theme_preset_light` | string | `"light"` | Used when following the system. |
-| `theme_preset_dark` | string | `"dark"` | Used when following the system. |
+| `theme_preset_light` | string | `"osiris"` | Used when following the system. |
+| `theme_preset_dark` | string | `"osiris"` | Used when following the system. |
 | `theme_legible_palette` | bool | `true` | Brighten or darken bright ANSI colours that would be unreadable on the background. |
 | `window_opacity` | number | — | 0.2–1.0. Unset means "follow the theme". |
 | `window_blur` | bool | — | Blur behind a translucent window (macOS). Unset means "follow the theme". |
 | `window_backdrop` | enum | `"auto"` | Windows only: `auto`, `blur`, `mica`, `mica-alt`, `acrylic`, `off`. |
 | `dim_inactive_panes` | bool | `true` | Dim panes that are not focused. |
+| `crt_scanlines` | bool | `false` | Phosphor scanlines over the grid — one line every three device pixels at 4% of the foreground, painted over everything and never animated. Off by default: readability of the text under it outranks the atmosphere over it. |
 | `startup_mode` | enum | `"normal"` | `normal`, `maximized`, `fullscreen`. |
 | `remember_window_size` | bool | `true` | Reopen at the last size and position. |
 | `restore_session` | bool | `true` | Reopen the last window's tabs, splits, and directories. |

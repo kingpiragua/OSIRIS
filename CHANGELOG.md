@@ -1,11 +1,74 @@
 # Changelog
 
-All notable changes to osiris are documented in this file.
+All notable changes to OSIRIS.EXE are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [26.8.4] — OSIRIS.EXE
+
+The first release under the archive's own name. Everything below is this fork's;
+upstream tty7's history continues under the older headings.
+
+### Added
+
+- **The archive's own registers.** Five themes built from the locked v3.0
+  tokens, `osiris` (phosphor on duat black) as the default: `eye_of_horus`
+  reads the same world from the Network's side, and `signal_bleed`,
+  `pale_horse` and `flyerhead` are the three house styles as terminals.
+  `flyerhead` is light on purpose — a 1993 rave flyer is ink on paper — and
+  carries its own ANSI ramp so a pane's colors stay ink instead of glowing. The
+  poles never blend in any of them: no slot mixes green and crimson, and slot 6
+  is phosphor-dim rather than a third pole. Every one clears the same contrast
+  floors the nine upstream themes do.
+
+- **Geist Mono, bundled.** The terminal voice this project is written in, under
+  the SIL Open Font License, embedded in the binary and set as the default face.
+  Hack stays embedded behind it as the fallback anchor, so a config naming Hack
+  keeps working and the chain still ends on a face that cannot be missing.
+
+- **The integrity rule, reading real state.** The empty window now shows how
+  much of the archive on this machine is still running: workspaces the session
+  server still holds panes for, out of every workspace it knows. The percentage
+  is that ratio scaled to 63 and never past it — the Horus fractions sum to
+  63/64, and the missing 1/64 is not something a process restores for itself.
+  The bar is two flat fills meeting at a hard contact edge.
+
+- **A boot rite.** Six lines of machine voice on a cold start, once per process
+  and never on a second window, over in a second and a half.
+
+- **CRT scanlines** behind `crt_scanlines` in `config.json`, off by default.
+  One line every three device pixels at 4% of the foreground, painted over
+  everything, never animated. Readability of the text under it outranks the
+  atmosphere over it.
+
+- **The wedjat.** New app mark — the Eye of Horus on a duat-black terminal card
+  with the 63% integrity rule along its bottom edge. The `.ico` and `.icns`
+  ladders take the painted card at large sizes and a vector cut of the eye at
+  48px and below, so the taskbar icon is art-directed rather than averaged; the
+  tray glyph is the same eye as an alpha-only silhouette.
+
+### Changed
+
+- **Renamed throughout, from tty7.** The GUI is `osiris` (`osiris.exe`), the CLI
+  on PATH is `oexe`, the session server is `osiris-server`. Config lives in
+  `~/.config/osiris` (`%APPDATA%\osiris`), panes carry `OSIRIS_PANE` /
+  `OSIRIS_WS` / `OSIRIS_CONFIG_DIR`, `TERM_PROGRAM` is `osiris`, and the
+  keychain services, Windows AUMID, macOS bundle id and installer AppId are all
+  this project's. Nothing is shared with an installed tty7; the two can sit on
+  one machine without touching each other. See `CONVERSION.md`.
+
+- **The command palette answers in the shared error voice** — `UNKNOWN COMMAND`
+  / `TYPE "help"` — and the UI calls the product OSIRIS.EXE in all three
+  locales.
+
+### Fixed
+
+- The scrollback file magic is eight bytes again. The rename made it ten, which
+  no reader would have accepted.
+
 
 ### Added
 

@@ -7733,7 +7733,7 @@ mod tests {
             "History search",
             "Dim inactive panes",
             "Option (⌥) acts as Meta",
-            "Install the osiris command on PATH",
+            "Install the OSIRIS.EXE command on PATH",
         ] {
             assert!(
                 settings_search_entries()
@@ -7807,7 +7807,7 @@ mod tests {
             ssh_group_label(crate::core::ssh_config::IMPORTED_GROUP),
             "~/.ssh/config"
         );
-        assert_eq!(ssh_group_label(""), "In osiris");
+        assert_eq!(ssh_group_label(""), "In OSIRIS.EXE");
         assert_eq!(ssh_group_label("Work"), "Work");
     }
 

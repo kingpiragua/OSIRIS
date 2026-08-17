@@ -174,7 +174,7 @@ impl Theme {
             sidebar,
             // Blended, not bisected, so a palette's own softness carries into
             // the sidebar — but floored on the fill it is actually painted on
-            // (`sidebar`, not `background`), because four of the eleven builtins
+            // (`sidebar`, not `background`), because four of the fourteen builtins
             // land this under 4.5:1 and it is the tab title, not a caption.
             sidebar_fg: at_least(mix(fg, bg, 0.28), fg, sidebar, TEXT_FLOOR),
             accent: legible_accent(bg, self.accent),
@@ -1098,14 +1098,46 @@ const OSIRIS_ANSI16: [(u8, u8, u8); 16] = [
     token(CREAM),          // 15 bright white
 ];
 
-static BUILTINS: [BuiltinSpec; 11] = [
+/// The ramp for a theme printed on paper rather than on a screen.
+///
+/// Flyerhead '93 is a xerox: the surface is light, so the normal half of the
+/// ramp is the ink half of the token list and the bright half is where the
+/// saturated flyer colors live. Slot 10 stays full phosphor even though it
+/// shouts on cream — the Signal is that green wherever it appears, and a
+/// program printing "bright green" is printing the Signal.
+const XEROX_ANSI16: [(u8, u8, u8); 16] = [
+    token(DUAT_BLACK),     // 0  black          the ink
+    token(CRIMSON_DIM),    // 1  red
+    token(PHOSPHOR_DIM),   // 2  green
+    token(RESURRECTION),   // 3  yellow
+    token(LAKE_MIDNIGHT),  // 4  blue
+    token(QUANTUM_VIOLET), // 5  magenta
+    // Not phosphor-dim: slot 2 already is, and the commit graph seeds adjacent
+    // lanes from 2 and 6 — one ink for both merges two lanes into one line.
+    token(DEEP_INDIGO),    // 6  cyan
+    token(BONE),           // 7  white
+    token(DEEP_INDIGO),    // 8  bright black
+    token(CRIMSON),        // 9  bright red     the Network
+    token(PHOSPHOR),       // 10 bright green   the Signal
+    token(AGI_GOLD),       // 11 bright yellow
+    token(QUANTUM_VIOLET), // 12 bright blue
+    token(QUANTUM_VIOLET), // 13 bright magenta
+    token(PHOSPHOR_DIM),   // 14 bright cyan
+    token(CREAM),          // 15 bright white
+];
+
+static BUILTINS: [BuiltinSpec; 14] = [
     // The default. Phosphor on duat black: what the archive terminal renders.
     BuiltinSpec {
         id: "osiris",
         name: "OSIRIS.EXE",
         background: DUAT_BLACK,
         foreground: PHOSPHOR,
-        accent: PHOSPHOR,
+        // Chrome accents are the *dimmed* phosphor, not the phosphor itself.
+        // Switch knobs and stepped labels are drawn in the foreground, so an
+        // accent equal to it leaves the knob invisible on its own track — the
+        // screen is still one green, just two depths of it.
+        accent: PHOSPHOR_DIM,
         caret: Some(PHOSPHOR),
         ansi16: OSIRIS_ANSI16,
     },
@@ -1117,9 +1149,54 @@ static BUILTINS: [BuiltinSpec; 11] = [
         name: "EYE OF HORUS.EXE",
         background: DUAT_BLACK,
         foreground: CRIMSON,
-        accent: CRIMSON,
+        // Violet for the chrome, for the same reason `osiris` dims its own:
+        // the knob is the foreground, and crimson-on-crimson is a lost control.
+        accent: QUANTUM_VIOLET,
         caret: Some(CRIMSON),
         ansi16: OSIRIS_ANSI16,
+    },
+    // ---- The three house styles, as terminals -----------------------------
+    //
+    // Same locked tokens, same world law; what changes is which register the
+    // chrome is drawn in. None of them blends the poles — a program printing
+    // green prints the Signal in all three.
+    //
+    // Signal Bleed: ink monochrome ground, phosphor fringe. Bone text on duat
+    // black with the green kept for the accents and the caret — the style's
+    // "saturated subject on a monochrome field", read as a terminal.
+    BuiltinSpec {
+        id: "signal_bleed",
+        name: "Signal Bleed",
+        background: DUAT_BLACK,
+        foreground: BONE,
+        accent: PHOSPHOR_DIM,
+        caret: Some(PHOSPHOR),
+        ansi16: OSIRIS_ANSI16,
+    },
+    // Pale Horse Cel: the 1990s OVA cel — a night-blue ground rather than pure
+    // black, cream where the cel paint sits, violet chrome, and a crimson caret
+    // because in this style the thing that moves is the thing that kills you.
+    BuiltinSpec {
+        id: "pale_horse",
+        name: "Pale Horse Cel",
+        background: LAKE_MIDNIGHT,
+        foreground: CREAM,
+        accent: QUANTUM_VIOLET,
+        caret: Some(CRIMSON),
+        ansi16: OSIRIS_ANSI16,
+    },
+    // Flyerhead '93: Mode A, the xerox. The one OSIRIS register that is light,
+    // because a 1993 rave flyer is ink on paper — duat black on cream, crimson
+    // as the spot color, and the ramp swapped for `XEROX_ANSI16` so a pane's
+    // own colors stay ink instead of glowing.
+    BuiltinSpec {
+        id: "flyerhead",
+        name: "Flyerhead '93",
+        background: CREAM,
+        foreground: DUAT_BLACK,
+        accent: CRIMSON,
+        caret: Some(DUAT_BLACK),
+        ansi16: XEROX_ANSI16,
     },
     BuiltinSpec {
         id: "light",
@@ -1382,7 +1459,19 @@ mod tests {
             .collect();
         assert_eq!(
             dark,
-            ["dark", "dracula", "harbor", "one_dark_pro", "rose_pine"]
+            [
+                // Four of the five OSIRIS registers are dark; `flyerhead` is
+                // the xerox, and a flyer is ink on paper.
+                "osiris",
+                "eye_of_horus",
+                "signal_bleed",
+                "pale_horse",
+                "dark",
+                "dracula",
+                "harbor",
+                "one_dark_pro",
+                "rose_pine"
+            ]
         );
     }
 

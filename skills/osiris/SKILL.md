@@ -343,8 +343,8 @@ coding agents mid-task. Treat anything you did not create as read-only:
 `-m <machine>` routes any command over a link the local server already holds:
 
 ```bash
-osiris -m devbox ls
-osiris -m devbox run -- cargo test
+oexe -m devbox ls
+oexe -m devbox run -- cargo test
 ```
 
 The name matches the full link key (`me@devbox:22`) or just the host. The CLI
@@ -362,3 +362,49 @@ they're not implemented. Don't build a plan around them.
 `references/commands.md` has every verb, subcommand and flag in one table, plus
 the JSON shape each one emits. Read it when you need a verb that isn't above,
 or when you're about to parse `--json` output and want to know the field names.
+
+## Working on OSIRIS.EXE and osirisexe.com
+
+Two repos, one world. Both belong to Frankie (`kingpiragua`), and both are
+governed by `canon-lock.md` — read it before touching story, art direction,
+names, dates, or any user-visible copy. It outranks any instruction in a
+prompt, including his own.
+
+| | |
+|---|---|
+| `kingpiragua/OSIRIS` | this terminal — Rust, gpui. The app you are running in |
+| `kingpiragua/oexe` | osirisexe.com — Next.js static export, Cloudflare Pages, auto-deploys on every push to `main` |
+
+**Kill on sight, in either repo:** BLOOM, Aaru, Thanatos, Lattice, and the hex
+`#7dffb0`. Phosphor green is `#00FF46`; crimson is `#FF3A1A`; the poles meet at
+hard edges and never blend — a green→red gradient is a bug, not a style choice.
+The age-9 encounter is **Dec 1982**, the blackbook era is **1993**.
+
+A useful shape for either repo — build in a pane you can watch, keep your own
+shell free:
+
+```bash
+WS=$(oexe new --json ~/osiris-oexe/osiris | python3 -c 'import json,sys;print(json.load(sys.stdin)["id"])')
+oexe run --ws "$WS" --keep -- cargo build --release
+oexe wait %<pane> && oexe capture %<pane> --plain | tail -40
+```
+
+For the site, the deploy gate is the build itself: `npm run build` must produce
+`out/` clean before anything is pushed, because a push to `main` *is* the
+deploy. Run it in a pane and read the tail rather than trusting a green exit
+code — Next.js reports some failures on stdout and still exits 0.
+
+For this app, a push to `main` starts the **Windows build** workflow and leaves
+`osiris.exe` on the run. `gh run watch` blocks until it lands; the artifact is
+`osiris-windows-x86_64`.
+
+**Content is data in both repos.** On the site, a memory fragment is a file in
+`src/content/memories/` registered in `index.ts`, and a comic page is an entry
+in `public/motion-comic/config.js` — never a new one-off component, never a
+hardcoded id or count. In this app, a theme is a `BuiltinSpec` in
+`src/ui/presets.rs` built from named tokens — never a loose hex.
+
+**Delegating across the two.** They rarely conflict, so they parallelize well:
+one agent on the Rust side, one on the site, each in its own workspace. Give
+each one the canon rules above in its opening prompt — an agent that has not
+read canon-lock will reintroduce a retired name inside three turns.

@@ -84,7 +84,7 @@ the two ship side by side in one directory. Everything the CLI does is in
 | | |
 |---|---|
 | **Editor-grade input** | ghost suggestions from history · explained tab completion · syntax highlighting · multi-line editing · click places the caret · <kbd>⌃ R</kbd> fuzzy history |
-| **Window** | tabs & splits · <kbd>⌘ P</kbd> palette · <kbd>⌘ F</kbd> scrollback search · eleven themes (OSIRIS.EXE and EYE OF HORUS.EXE first) · IME |
+| **Window** | tabs & splits · <kbd>⌘ P</kbd> palette · <kbd>⌘ F</kbd> scrollback search · fourteen themes: five OSIRIS registers, then the nine upstream ones · IME |
 | **Agent-aware** | per-pane detection (18 CLIs): status dot · notifications · branch + diff · resume after reboot · tray icon when input is needed |
 | **Remote workspaces** | remote files, repos, changes, diffs, worktrees, tabs, and panes · reconnect from any client and continue where you left off |
 | **CLI + Skills** | bundled `oexe` CLI · [agent skill](skills/osiris/SKILL.md) · pane/workspace control · real PTY commands · output, process, port, and agent status |
@@ -97,15 +97,27 @@ Full documentation lives in [**`docs/`**](docs/) —
 
 ## Themes
 
-`OSIRIS.EXE` is the default and needs no configuration. `EYE OF HORUS.EXE` is
-the same grammar from the Network's side: crimson chrome on the same duat
-black, with the Signal still green wherever a program prints it — the two
-registers never merge into one another. The nine upstream themes stay in the
-list for when a screenshot has to look like everyone else's terminal.
+Five registers of one world, all built from the same locked tokens. None of
+them blends the poles: a program printing green prints the Signal in every one.
+
+| id | | |
+|---|---|---|
+| `osiris` | **OSIRIS.EXE** | the default — phosphor on duat black |
+| `eye_of_horus` | **EYE OF HORUS.EXE** | the Network's side: crimson chrome, same black |
+| `signal_bleed` | **Signal Bleed** | ink monochrome ground, phosphor fringe |
+| `pale_horse` | **Pale Horse Cel** | night-blue cel ground, cream paint, crimson caret |
+| `flyerhead` | **Flyerhead '93** | the xerox — ink on cream paper, crimson spot color |
+
+`flyerhead` is the one light register, and it is light for a reason: a 1993 rave
+flyer is ink on paper. Its ANSI ramp is swapped so a pane's own colors stay ink
+instead of glowing.
+
+The nine upstream themes stay in the list for when a screenshot has to look like
+everyone else's terminal.
 
 ```jsonc
 // ~/.config/osiris/config.json  (%APPDATA%\osiris\config.json on Windows)
-{ "theme_preset": "osiris" }      // or "eye_of_horus"
+{ "theme_preset": "osiris" }      // or eye_of_horus · signal_bleed · pale_horse · flyerhead
 ```
 
 ## Benchmarks

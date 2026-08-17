@@ -9768,7 +9768,7 @@ dependencies = [
 
 [[package]]
 name = "osiris"
-version = "26.8.3"
+version = "26.8.4"
 dependencies = [
  "alacritty_terminal",
  "anyhow",
@@ -9812,7 +9812,7 @@ dependencies = [
 
 [[package]]
 name = "osiris-cli"
-version = "26.8.3"
+version = "26.8.4"
 dependencies = [
  "alacritty_terminal",
  "anyhow",
@@ -9827,7 +9827,7 @@ dependencies = [
 
 [[package]]
 name = "osiris-core"
-version = "26.8.3"
+version = "26.8.4"
 dependencies = [
  "anyhow",
  "base64",
@@ -9860,7 +9860,7 @@ dependencies = [
 
 [[package]]
 name = "osiris-server"
-version = "26.8.3"
+version = "26.8.4"
 dependencies = [
  "libc",
  "tempfile",
