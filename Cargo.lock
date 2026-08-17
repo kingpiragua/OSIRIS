@@ -6001,6 +6001,107 @@ dependencies = [
 ]
 
 [[package]]
+name = "osiris"
+version = "26.8.4"
+dependencies = [
+ "alacritty_terminal",
+ "anyhow",
+ "async_zip",
+ "core-foundation 0.10.0",
+ "gpui",
+ "gpui-component",
+ "gpui-component-assets",
+ "gpui_platform",
+ "image",
+ "jieba-rs",
+ "keyring",
+ "ksni",
+ "libc",
+ "log",
+ "mac-notification-sys",
+ "memchr",
+ "notify 8.2.0",
+ "notify-rust",
+ "objc2 0.6.4",
+ "objc2-app-kit 0.3.2",
+ "objc2-foundation 0.3.2",
+ "osiris-core",
+ "plist",
+ "regex",
+ "reqwest_client",
+ "resvg",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "smallvec",
+ "smol",
+ "tempfile",
+ "tray-icon",
+ "unicode-segmentation",
+ "uuid",
+ "windows 0.58.0",
+ "windows-sys 0.61.2",
+ "winresource",
+]
+
+[[package]]
+name = "osiris-cli"
+version = "26.8.4"
+dependencies = [
+ "alacritty_terminal",
+ "anyhow",
+ "clap",
+ "libc",
+ "osiris-core",
+ "serde_json",
+ "tempfile",
+ "unicode-width",
+ "windows-sys 0.59.0",
+]
+
+[[package]]
+name = "osiris-core"
+version = "26.8.4"
+dependencies = [
+ "anyhow",
+ "base64",
+ "core-foundation 0.10.0",
+ "getrandom 0.4.3",
+ "ignore",
+ "libc",
+ "libgssapi",
+ "log",
+ "memchr",
+ "miniz_oxide",
+ "notify 8.2.0",
+ "portable-pty",
+ "russh",
+ "russh-sftp",
+ "serde",
+ "serde_json",
+ "sha2 0.11.0",
+ "smallvec",
+ "smol",
+ "system-configuration",
+ "system-configuration-sys",
+ "tempfile",
+ "tokio",
+ "ureq",
+ "uuid",
+ "windows-sys 0.59.0",
+ "winreg 0.52.0",
+]
+
+[[package]]
+name = "osiris-server"
+version = "26.8.4"
+dependencies = [
+ "libc",
+ "osiris-core",
+ "tempfile",
+]
+
+[[package]]
 name = "p256"
 version = "0.14.0-rc.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -9764,107 +9865,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d2df906b07856748fa3f6e0ad0cbaa047052d4a7dd609e231c4f72cee8c36f31"
 dependencies = [
  "core_maths",
-]
-
-[[package]]
-name = "osiris"
-version = "26.8.4"
-dependencies = [
- "alacritty_terminal",
- "anyhow",
- "async_zip",
- "core-foundation 0.10.0",
- "gpui",
- "gpui-component",
- "gpui-component-assets",
- "gpui_platform",
- "image",
- "jieba-rs",
- "keyring",
- "ksni",
- "libc",
- "log",
- "mac-notification-sys",
- "memchr",
- "notify 8.2.0",
- "notify-rust",
- "objc2 0.6.4",
- "objc2-app-kit 0.3.2",
- "objc2-foundation 0.3.2",
- "plist",
- "regex",
- "reqwest_client",
- "resvg",
- "serde",
- "serde_json",
- "serde_yaml",
- "smallvec",
- "smol",
- "tempfile",
- "tray-icon",
- "osiris-core",
- "unicode-segmentation",
- "uuid",
- "windows 0.58.0",
- "windows-sys 0.61.2",
- "winresource",
-]
-
-[[package]]
-name = "osiris-cli"
-version = "26.8.4"
-dependencies = [
- "alacritty_terminal",
- "anyhow",
- "clap",
- "libc",
- "serde_json",
- "tempfile",
- "osiris-core",
- "unicode-width",
- "windows-sys 0.59.0",
-]
-
-[[package]]
-name = "osiris-core"
-version = "26.8.4"
-dependencies = [
- "anyhow",
- "base64",
- "core-foundation 0.10.0",
- "getrandom 0.3.4",
- "ignore",
- "libc",
- "libgssapi",
- "log",
- "memchr",
- "miniz_oxide",
- "notify 8.2.0",
- "portable-pty",
- "russh",
- "russh-sftp",
- "serde",
- "serde_json",
- "sha2 0.11.0",
- "smallvec",
- "smol",
- "system-configuration",
- "system-configuration-sys",
- "tempfile",
- "tokio",
- "ureq",
- "uuid",
- "windows-sys 0.59.0",
- "winreg 0.52.0",
-]
-
-[[package]]
-name = "osiris-server"
-version = "26.8.4"
-dependencies = [
- "libc",
- "tempfile",
- "osiris-core",
 ]
 
 [[package]]
