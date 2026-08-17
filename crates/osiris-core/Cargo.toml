@@ -155,7 +155,7 @@ getrandom = "0.3"
 # tree on hangup (ConPTY's `kill` only reaches the shell itself). `Registry`
 # additionally lets `daemon::windows_env` re-read the two environment hives at
 # pane-spawn time so a long-lived daemon stops handing out its startup `PATH`.
-windows-sys = { version = "0.59", features = [
+windows-sys = { version = "0.61", features = [
     "Win32_Foundation",
     "Win32_Security",
     "Win32_System_Console",
