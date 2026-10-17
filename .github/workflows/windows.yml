@@ -65,7 +65,7 @@ jobs:
         run: '& ./.github/scripts/verify-windows-package.ps1 "x86_64"'
 
       - name: Upload osiris.exe artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: osiris-windows-x86_64
           path: |
